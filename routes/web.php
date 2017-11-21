@@ -14,3 +14,9 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix' => 'api/v1'], function () use ($router) {
+    $router->get('/findNearby', 'LocationController@findNearby');
+    $router->get('/findByZip/{zip}', 'LocationController@findByZip');
+    $router->get('/findByName/{name}', 'LocationController@findByName');
+});
