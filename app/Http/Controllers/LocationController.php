@@ -36,7 +36,7 @@ class LocationController extends ApiController
 
     public function findByName($name)
     {
-        $locations = Location::byName($name)->get();
+        $locations = Location::byName(utf8_encode($name))->get();
 
         if ($locations->count() == 0) {
             return $this->respondNotFound();
