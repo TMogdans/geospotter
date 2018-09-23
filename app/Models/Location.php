@@ -27,7 +27,7 @@ class Location extends Model
 
     public function scopeByName($query, $name)
     {
-        $query->where('location', 'like', "%$name%");
+        $query->where('location', 'like', "$name%");
     }
 
     public function scopeDistance($query, $lat, $lon, $radius, $unit)
