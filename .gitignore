@@ -1,9 +1,2 @@
-/vendor
-/.idea
-Homestead.json
-Homestead.yaml
 .env
-storage/logs
-.DS_Store
-node_modules
 
