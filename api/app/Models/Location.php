@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -20,12 +22,12 @@ class Location extends Model
 
     public $timestamps = false;
 
-    public function scopeByZip($query, $zip)
+    public function scopeByZip($query, $zip): void
     {
         $query->where('zip', 'like', "%$zip%");
     }
 
-    public function scopeByName($query, $name)
+    public function scopeByName($query, $name): void
     {
         $query->where('location', 'like', "$name%");
     }

@@ -1,47 +1,72 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-
-use App\Http\Transformers\LocationsTransformer;
+use App\Http\Resources\LocationResource;
 use App\Models\Location;
-use App\Services\TransformerService;
+use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use JsonException;
+use TMogdans\JsonApiProblemResponder\Exceptions\BadRequestException;
 
 class LocationController extends ApiController
 {
 
-    public function findNearby(Request $request)
+    /**
+     * @param Request $request
+     * @return AnonymousResourceCollection
+     * @throws BadRequestException
+     */
+    public function findNearby(Request $request): AnonymousResourceCollection
     {
-        $locations = Location::distance(floatval($request->lat), floatval($request->lon), doubleval($request->radius),
-            $request->unit)->get();
-
-        if ($locations->count() == 0) {
-            return $this->respondNotFound();
+        try {
+            $locations = Location::distance(
+                (float) $request->lat,
+                (float) $request->lon,
+                (float) $request->radius,
+                $request->unit
+            )->get();
+        } catch (Exception $exception) {
+            throw new BadRequestException($exception->getMessage());
         }
 
-        return $this->response(TransformerService::transform($locations, new LocationsTransformer()));
+        return LocationResource::collection($locations);
     }
 
-    public function findByZip($zip)
+    /**
+     * @param $zip
+     * @return AnonymousResourceCollection
+     * @throws BadRequestException
+     */
+    public function findByZip($zip): AnonymousResourceCollection
     {
-        $locations = Location::byZip($zip)->get();
-
-        if ($locations->count() == 0) {
-            return $this->respondNotFound();
+        try {
+            $locations = Location::byZip($zip)->get();
+        } catch (Exception $exception) {
+            throw new BadRequestException($exception->getMessage());
         }
 
-        return $this->response(TransformerService::transform($locations, new LocationsTransformer()));
+        return LocationResource::collection($locations);
     }
 
-    public function findByName($name)
+    /**
+     * @param $name
+     * @return AnonymousResourceCollection
+     * @throws BadRequestException
+     */
+    public function findByName($name): AnonymousResourceCollection
     {
-        $locations = Location::byName(urldecode($name))->get();
-
-        if ($locations->count() == 0) {
-            return $this->respondNotFound();
+        try {
+            /** @var Collection $locations */
+            $locations = Location::byName(urldecode($name))->get();
+        } catch (Exception $exception) {
+            throw new BadRequestException($exception->getMessage());
         }
 
-        return $this->response(TransformerService::transform($locations, new LocationsTransformer()));
+        return LocationResource::collection($locations);
     }
 }

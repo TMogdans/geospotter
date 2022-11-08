@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Response;
+use JsonException;
+use Laravel\Lumen\Http\ResponseFactory;
 
 abstract class ApiController extends Controller
 {
-    private $headers;
+    private array $headers = [];
 
-    private $code = 200;
+    private int $code = 200;
 
-    private $status = [
+    private array $status = [
         'code' => 200,
         'message' => 'ok'
     ];
@@ -20,47 +25,36 @@ abstract class ApiController extends Controller
         $this->addHeader('Content-Type', 'application/json');
     }
 
-    public function addHeader($key, $value)
+    public function addHeader($key, $value): void
     {
         $this->headers[$key] = $value;
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    public function setStatusCode($code)
+    public function setStatusCode($code): void
     {
         $this->code = $code;
         $this->status['code'] = $code;
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->code;
     }
 
-    public function respondNotFound()
-    {
-        $this->setStatusCode(404);
-        $this->setMessage('Not Found');
-        $response['status'] = $this->getStatus();
-
-        return $this->respond($response);
-    }
-
-    public function getStatus()
+    public function getStatus(): array
     {
         return $this->status;
     }
 
-    public function setMessage($string)
-    {
-        $this->status['message'] = $string;
-    }
-
-    public function response($body)
+    /**
+     * @throws JsonException
+     */
+    public function response($body): Response|ResponseFactory
     {
         $response['status'] = $this->getStatus();
         $response['body'] = $body;
@@ -68,8 +62,14 @@ abstract class ApiController extends Controller
         return $this->respond($response);
     }
 
-    private function respond($payload)
+    /**
+     * @throws JsonException
+     */
+    private function respond($payload): Response|ResponseFactory
     {
-        return response(json_encode($payload), $this->getStatusCode())->withHeaders($this->getHeaders());
+        return response(
+            json_encode($payload, JSON_THROW_ON_ERROR),
+            $this->getStatusCode()
+        )->withHeaders($this->getHeaders());
     }
 }
