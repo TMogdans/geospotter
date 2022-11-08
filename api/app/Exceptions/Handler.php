@@ -2,13 +2,8 @@
 
 namespace App\Exceptions;
 
-use Exception;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class Handler extends \TMogdans\JsonApiProblemResponder\Handler

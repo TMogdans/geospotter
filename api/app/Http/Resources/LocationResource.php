@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
-class LocationResource extends \Illuminate\Http\Resources\Json\JsonResource
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class LocationResource extends JsonResource
 {
     public function toArray($request): array
     {
